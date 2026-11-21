@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="gl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Aniversario</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="contedor-principal">
+        <h1>Busca o teu Aniversario Perfecto 🎂</h1>
+        <p>Introduce a túa data de nacemento e un día da semana.</p>
+
+        <form>
+            <label for="data-nacemento">Data de Nacemento:</label>
+            <input type="date" id="data-nacemento" required>
+
+            <label for="dia-semana">Día da Semana Desexado:</label>
+            <select id="dia-semana" required>
+                <option value="">Selecciona un día</option>
+                <option value="1">Luns</option>
+                <option value="2">Martes</option>
+                <option value="3">Mércores</option>
+                <option value="4">Xoves</option>
+                <option value="5">Venres</option>
+                <option value="6">Sábado</option>
+                <option value="0">Domingo</option>
+            </select>
+
+            <button type="button" onclick="calcularAniversario()">Calcular Próximo Aniversario</button>
+        </form>
+
+        <div id="resultado" class="resultado"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

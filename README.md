@@ -16,6 +16,8 @@ Tareas guiadas de JavaScript del ciclo superior de **Desarrollo de Aplicaciones 
 
 ---
 
+> ✅ **Estás en la rama `solution`**: cada carpeta incluye la tarea resuelta y un `SOLUCION.md` con los cambios respecto a la guía oficial y las trampas de examen.
+
 ## Contenido
 
 - [Sobre el repositorio](#sobre-el-repositorio)

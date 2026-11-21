@@ -1,0 +1,116 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --cor-fondo: #e3f2fd;
+    --cor-principal: #1e88e5;
+    --cor-texto: #333;
+    --cor-borde-input: #b3e5fc;
+    --cor-sombra: rgba(0, 0, 0, 0.1);
+}
+
+/* Flexbox para centrar o panel nos dous eixes */
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--cor-fondo);
+    color: var(--cor-texto);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.contedor-principal {
+    background-color: #fff;
+    width: 90%;
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px var(--cor-sombra);
+}
+
+h1 {
+    color: var(--cor-principal);
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.formulario-tarefa {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+#entrada-tarefa {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borde-input);
+    border-radius: 8px;
+}
+
+#entrada-tarefa:focus {
+    outline: none;
+    border-color: var(--cor-principal);
+}
+
+.formulario-tarefa button {
+    padding: 12px 22px;
+    font-size: 16px;
+    color: #fff;
+    background-color: var(--cor-principal);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.formulario-tarefa button:hover {
+    background-color: #1565c0;
+}
+
+#lista-tarefas {
+    list-style: none;
+}
+
+/* Flexbox: texto á esquerda, botóns á dereita */
+.elemento-tarefa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px var(--cor-sombra);
+}
+
+.elemento-tarefa.completada {
+    background-color: #e9ecef;
+}
+
+.elemento-tarefa.completada span {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.contedor-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.contedor-btns button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #888;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.btn-completar:hover { color: #28a745; }
+.btn-eliminar:hover { color: #dc3545; }

@@ -1,0 +1,105 @@
+:root {
+    --cor-fondo-principal: #f0f2f5;
+    --cor-tapa-carta: #1e88e5;
+    --cor-fondo-carta: #ffffff;
+    --cor-sombra: rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--cor-fondo-principal);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.contedor-xogo {
+    background-color: #fff;
+    width: 90%;
+    max-width: 550px;
+    padding: 30px;
+    margin: 30px 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px var(--cor-sombra);
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-top: 0;
+}
+
+/* GRID 4 x 4 */
+.taboleiro {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 12px;
+    margin-top: 20px;
+}
+
+.carta {
+    position: relative;
+    height: 140px;
+    cursor: pointer;
+}
+
+.contido-carta {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* As dúas caras superpostas */
+.parte-diante,
+.parte-detras {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px var(--cor-sombra);
+}
+
+.parte-diante {
+    opacity: 1;
+    background-color: var(--cor-tapa-carta);
+    color: #fff;
+    font-size: 28px;
+}
+
+.parte-detras {
+    opacity: 0;
+    background-color: var(--cor-fondo-carta);
+    font-size: 48px;
+    pointer-events: none;
+}
+
+/* Volteo instantáneo: só cambian as opacidades */
+.carta-virada .parte-diante { opacity: 0; }
+.carta-virada .parte-detras { opacity: 1; pointer-events: auto; }
+
+.parella-atopada {
+    cursor: default;
+}
+
+.info-xogo p {
+    margin: 12px 0 0;
+    font-size: 18px;
+}
+
+#mensaxe {
+    font-weight: bold;
+    color: var(--cor-tapa-carta);
+    min-height: 1.4em;
+}
+
+/* Mellora opcional suxerida pola guía: cartas máis baixas en móbiles */
+@media (max-width: 480px) {
+    .taboleiro { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-gap: 8px; }
+    .carta { height: 80px; }
+    .parte-detras { font-size: 32px; }
+}

@@ -1,0 +1,87 @@
+:root {
+    --cor-fondo-principal: #e8f5e9;
+    --cor-primaria: #4caf50;
+    --cor-secundaria: #388e3c;
+    --cor-fondo-carta: #ffffff;
+    --cor-sombra: rgba(0, 0, 0, 0.1);
+}
+
+/* Flexbox no body para centrar a tarxeta nos dous eixes */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--cor-fondo-principal);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.contedor-principal {
+    background-color: var(--cor-fondo-carta);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px var(--cor-sombra);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+h1 {
+    color: var(--cor-secundaria);
+}
+
+p {
+    color: #555;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: var(--cor-secundaria);
+}
+
+input[type="date"],
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 12px;
+    background-color: var(--cor-primaria);
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--cor-secundaria);
+}
+
+.resultado {
+    margin-top: 30px;
+    padding: 15px;
+    border-top: 2px solid var(--cor-primaria);
+    min-height: 80px;
+    text-align: left;
+}
+
+.resultado h2 {
+    color: var(--cor-primaria);
+    margin-top: 0;
+}

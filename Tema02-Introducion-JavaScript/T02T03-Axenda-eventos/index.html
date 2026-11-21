@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="gl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axenda de Eventos JS</title>
+    <link rel="stylesheet" href="estilos.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="contedor-principal">
+        <h1>Axenda de Eventos 📅</h1>
+
+        <div class="engadir-evento">
+            <h2>Engadir Novo Evento</h2>
+            <form>
+                <label for="data-evento">Data:</label>
+                <input type="date" id="data-evento" required>
+
+                <label for="nome-evento">Nome do Evento:</label>
+                <input type="text" id="nome-evento" placeholder="Ex: Reunión ou Exame" required>
+
+                <button type="button" onclick="engadirEvento()">Gardar Evento</button>
+            </form>
+        </div>
+
+        <div class="lista-eventos">
+            <h2>Próximos Eventos</h2>
+            <div class="filtros">
+                <button type="button" onclick="filtrarEventos('semana')">Próxima Semana</button>
+                <button type="button" onclick="filtrarEventos('mes')">Próximo Mes</button>
+                <button type="button" onclick="filtrarEventos('ano')">Próximo Ano</button>
+                <button type="button" onclick="filtrarEventos('todos')">Todos</button>
+            </div>
+            <ul id="lista-eventos"></ul>
+        </div>
+    </div>
+</body>
+</html>
