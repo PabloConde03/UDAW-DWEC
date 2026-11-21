@@ -1,0 +1,9 @@
+#!/bin/sh
+# Regenera PROGRESO.md y el bloque del README antes de cada commit.
+# Activar una sola vez:   git config core.hooksPath tools/hooks
+if ! command -v node >/dev/null 2>&1; then
+  echo "[pre-commit] node no está en el PATH: progreso no regenerado."
+  exit 0
+fi
+node tools/generar-progreso.js && git add PROGRESO.md README.md
+exit 0

@@ -1,0 +1,23 @@
+/* ==================================================================== */
+/*  T02T01 · estilos.css                                                */
+/*  Cada bloque TODO es una regla o grupo de reglas. Bórralo al hacerlo. */
+/* ==================================================================== */
+
+/* TODO 1: Reset universal: margin y padding a 0, box-sizing:
+           border-box */
+
+/* TODO 2: body: fondo #f0f2f5 y min-height: 100vh */
+
+/* TODO 3: .contedor: tarjeta blanca, border-radius 12px, sombra suave,
+           texto centrado, width 90 % + max-width 500px, centrada con
+           margin: 4rem auto */
+
+/* TODO 4: .area-xogo: FLEXBOX en columna con gap */
+
+/* TODO 5: #xogada: estados :focus/:valid (borde #007bff) e :invalid
+           (rojo) */
+
+/* TODO 6: #boton-entrada: azul #007bff, :hover #0056b3, transition */
+
+/* TODO 7: .area-resultado min-height; #mensaxe en negrita azul;
+           #intentos gris pequeño */

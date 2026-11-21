@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<!--
+  Dashboard de progreso · UDAW-DWEC (rama Pablo)
+  Ábrelo con Live Server: http://127.0.0.1:5500/dashboard.html
+  Lee tools/tareas.json y tus ficheros con fetch, y se refresca solo cada 4 s.
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DWEC Lab · Progreso</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%23F7DF1E%27/%3E%3Ctext x=%2716%27 y=%2722%27 font-size=%2713%27 font-family=%27Arial%27 font-weight=%27700%27 fill=%27%23111C44%27 text-anchor=%27middle%27%3EJS%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --navy:#111C44; --navy-2:#1B2759; --primary:#2563EB; --bg:#F4F7FE; --card:#FFFFFF; --line:#E2E8F0;
+  --ink:#0F172A; --ink-2:#475569; --ink-3:#94A3B8; --shadow:0 4px 12px rgba(15,23,42,.04);
+  --ok-bg:#DCFCE7; --ok:#166534; --wip-bg:#FEF3C7; --wip:#92400E; --late-bg:#FEE2E2; --late:#991B1B; --todo-bg:#F1F5F9; --todo:#475569;
+  --c-ok:#16A34A; --c-wip:#F59E0B; --c-todo:#E2E8F0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+a{color:inherit;text-decoration:none}
+button,select,input{font:inherit}
+
+/* ── Layout ─────────────────────────────── */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--navy);color:#C7D2FE;padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 10px 22px;color:#fff}
+.brand-logo{width:34px;height:34px;border-radius:9px;background:var(--primary);display:grid;place-items:center;font-weight:800;font-size:13px;letter-spacing:-.5px}
+.brand b{display:block;font-size:15px}.brand small{color:#8E9BD0;font-size:11.5px}
+.nav-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#6F7CB4;padding:14px 12px 6px}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:#C7D2FE;font-weight:500;cursor:pointer}
+.nav a:hover{background:var(--navy-2);color:#fff}
+.nav a.active{background:var(--primary);color:#fff}
+.nav svg{width:17px;height:17px;flex:none}
+.side-foot{margin-top:auto;padding:12px;border-radius:10px;background:var(--navy-2);font-size:12px;color:#AEB9E8}
+.side-foot b{color:#fff}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.search{flex:1;min-width:220px;max-width:380px;position:relative}
+.search input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:9px;background:var(--bg);outline:none}
+.search input:focus{border-color:var(--primary);background:#fff}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;color:var(--ink-3)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-2);font-size:12.5px;font-weight:500;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.topbar select{padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink-2)}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#1D4ED8}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}.btn-ghost:hover{border-color:#CBD5E1}
+.btn-sm{padding:4px 9px;font-size:12px;border-radius:7px}
+.content{padding:24px 28px 40px}
+.view{display:none}.view.on{display:block}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
+.page-head h1{font-size:22px;letter-spacing:-.02em}
+.page-head p{color:var(--ink-2);font-size:13px}
+
+/* ── Cards ─────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.card h3{font-size:14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.card h3 small{font-weight:500;color:var(--ink-3);font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px}
+.kpi{display:flex;gap:12px;align-items:center}
+.kpi-ico{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;flex:none}
+.kpi-ico svg{width:20px;height:20px}
+.kpi b{font-size:22px;display:block;line-height:1.1;letter-spacing:-.02em}
+.kpi span{font-size:12px;color:var(--ink-2);white-space:nowrap}
+.grid-3{display:grid;grid-template-columns:1.05fr 1.35fr 1fr;gap:14px;margin-bottom:16px}
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+
+/* ── Donut & barras ─────────────────────── */
+.donut-wrap{display:flex;align-items:center;gap:18px}
+.donut{width:150px;height:150px;flex:none}
+.donut text{font-family:inherit}
+.legend{display:grid;gap:8px;font-size:12.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.bar-row{margin-bottom:14px}
+.bar-row:last-child{margin-bottom:0}
+.bar-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.bar-top b{font-weight:600}.bar-top span{color:var(--ink-2)}
+.bar{height:9px;border-radius:99px;background:var(--c-todo);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.mini{height:5px;width:70px;border-radius:99px;background:var(--c-todo);overflow:hidden;display:inline-block;vertical-align:middle}
+.mini i{display:block;height:100%;background:var(--primary)}
+
+/* ── Pills ─────────────────────────────── */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.st-completado{background:var(--ok-bg);color:var(--ok)}
+.st-en-progreso{background:var(--wip-bg);color:var(--wip)}
+.st-vencido{background:var(--late-bg);color:var(--late)}
+.st-pendiente{background:var(--todo-bg);color:var(--todo)}
+.p2{background:#E0F2FE;color:#0369A1}
+.tag{background:#F3E8FF;color:#6B21A8}
+
+/* ── Calendario ─────────────────────────── */
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal-head b{font-size:13.5px}
+.cal-nav{display:flex;gap:4px}
+.cal-nav button{border:1px solid var(--line);background:#fff;border-radius:7px;width:26px;height:26px;cursor:pointer;color:var(--ink-2)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:12px}
+.cal .dow{color:var(--ink-3);font-weight:600;font-size:10.5px;padding:4px 0}
+.cal .d{padding:6px 0;border-radius:7px;color:var(--ink-2)}
+.cal .d.out{color:#CBD5E1}
+.cal .d.today{outline:1.5px solid var(--primary);color:var(--primary);font-weight:700}
+.cal .d.due{background:var(--primary);color:#fff;font-weight:700}
+.cal.big .d{padding:14px 0;font-size:13px}
+
+/* ── Listas / tabla ─────────────────────── */
+.queue li{list-style:none;display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.queue li:first-child{border-top:0}
+.q-n{width:24px;height:24px;border-radius:7px;background:var(--bg);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--ink-2);flex:none}
+.q-main{flex:1;min-width:0}
+.q-main b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-main span{font-size:12px;color:var(--ink-2)}
+.empty{color:var(--ink-3);font-size:13px;padding:10px 0}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);background:#FAFBFF}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.group td{background:#F8FAFF;font-weight:700;font-size:13px;color:var(--ink)}
+tr.group td small{font-weight:500;color:var(--ink-2);margin-left:8px}
+tr.hide{display:none}
+.tbl-wrap{padding:0;overflow:auto}
+.acts{display:flex;gap:6px;align-items:center;justify-content:flex-end}
+.acts select{padding:4px 6px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff}
+.ico-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:#fff;display:inline-grid;place-items:center;cursor:pointer;color:var(--ink-2)}
+.ico-btn:hover{color:var(--primary);border-color:#BFDBFE}
+.ico-btn svg{width:14px;height:14px}
+.muted{color:var(--ink-3)}
+.ud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ud-task{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.ud-task:first-of-type{border-top:0}
+.ud-task .t{flex:1;min-width:0}
+.ud-task .t b{font-weight:600}
+.ud-task .t small{display:block;color:var(--ink-2);font-size:11.5px}
+.deadline{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.deadline:first-child{border-top:0}
+.dl-date{width:48px;text-align:center;border-radius:10px;background:#EFF6FF;color:var(--primary);padding:6px 0;flex:none}
+.dl-date b{display:block;font-size:18px;line-height:1}.dl-date small{font-size:10.5px;text-transform:uppercase;font-weight:700}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:50}
+.toast.on{opacity:1;transform:none}
+.readonly{background:#FEF3C7;color:#92400E;padding:8px 28px;font-size:12.5px;border-bottom:1px solid #FDE68A}
+
+/* ── Vista Planner A4 ───────────────────── */
+.a4-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.a4{background:#fff;width:210mm;min-height:297mm;margin:0 auto;padding:18mm 16mm;box-shadow:0 10px 40px rgba(15,23,42,.08);color:#1E293B;font-family:Georgia,"Times New Roman",serif}
+.a4 h1{font-family:"Playfair Display",Georgia,serif;font-size:30px;font-weight:700;letter-spacing:-.01em;border-bottom:2px solid #1E293B;padding-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.a4 h1 small{font-size:13px;font-weight:400;font-style:italic;color:#475569}
+.a4 h2{font-family:"Playfair Display",Georgia,serif;font-size:15px;text-transform:uppercase;letter-spacing:.12em;margin:20px 0 8px;color:#334155}
+.a4-meta{display:flex;gap:24px;font-size:12.5px;color:#475569;margin-top:8px}
+.a4-cols{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.a4 table{font-size:12px;border:1px solid #CBD5E1}
+.a4 th,.a4 td{border:1px solid #CBD5E1;padding:6px 8px;font-family:Georgia,serif;text-transform:none;letter-spacing:0;color:#1E293B;background:#fff}
+.a4 th{font-size:11px;font-weight:700;background:#F8FAFC}
+.a4 .box{font-size:15px;width:24px;text-align:center}
+.obj-line{display:flex;gap:10px;align-items:center;border-bottom:1px solid #CBD5E1;padding:7px 0;font-size:13.5px}
+.obj-line input{border:0;outline:0;flex:1;font-family:Georgia,serif;font-size:13.5px;background:transparent;color:#1E293B}
+.notes{border:1px solid #CBD5E1;min-height:58mm;background-image:repeating-linear-gradient(transparent,transparent 27px,#E2E8F0 27px,#E2E8F0 28px);padding:4px 8px}
+.notes textarea{width:100%;min-height:56mm;border:0;outline:0;resize:none;background:transparent;font-family:Georgia,serif;font-size:13px;line-height:28px;color:#1E293B}
+.a4-stat{border:1px solid #CBD5E1;padding:10px;font-size:12.5px}
+.a4-stat b{font-size:22px;font-family:"Playfair Display",Georgia,serif;display:block}
+
+@media (max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}.grid-3{grid-template-columns:1fr 1fr}.ud-grid{grid-template-columns:1fr}}
+@media (max-width:860px){.app{grid-template-columns:1fr}.sidebar{display:none}.grid-2,.grid-3{grid-template-columns:1fr}}
+
+@media print{
+  @page{size:A4;margin:0}
+  body{background:#fff}
+  .sidebar,.topbar,.readonly,.a4-toolbar,.view:not(#v-a4),.toast{display:none!important}
+  .app{display:block}.content{padding:0}
+  #v-a4{display:block!important}
+  .a4{box-shadow:none;margin:0;width:auto;min-height:auto}
+  .obj-line input::placeholder,.notes textarea::placeholder{color:transparent}
+}
+</style>
+<style>
+/* Extras DWEC */
+.files{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:7px;background:var(--bg);font-size:11.5px;color:var(--ink-2);font-weight:600}
+.fchip .mini{width:38px}
+.fchip.done{background:var(--ok-bg);color:var(--ok)}
+.fchip.done .mini i{background:var(--c-ok)}
+.task-card .t-files{display:grid;gap:10px;margin:12px 0}
+.task-card .t-file{display:grid;grid-template-columns:90px 1fr 46px;align-items:center;gap:10px;font-size:12.5px}
+.task-card .t-file b{font-weight:600;color:var(--ink-2);font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.task-card .t-foot{display:flex;gap:6px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:10px}
+.cfg{display:grid;gap:6px;margin-top:8px}
+.cfg input{width:100%;padding:6px 8px;border-radius:7px;border:1px solid #2E3B73;background:#0C1535;color:#fff;font-size:11.5px}
+.cfg small{color:#8E9BD0;font-size:10.5px;line-height:1.35}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.live i{width:8px;height:8px;border-radius:50%;background:#16A34A;box-shadow:0 0 0 3px #DCFCE7}
+.how{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.how code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:12px}
+.fatal{max-width:560px;margin:80px auto;text-align:center}
+.fatal h2{margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-logo" style="background:#F7DF1E;color:#111C44">JS</div><div><b>DWEC Lab</b><small>UDAW · MP0612</small></div></div>
+    <nav class="nav" id="nav">
+      <div class="nav-label">Vistas</div>
+      <a data-view="dash" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard general</a>
+      <a data-view="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>Planificador de tareas</a>
+      <a data-view="ud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2Z"/><path d="M8 7h7M8 11h5"/></svg>Por tarea</a>
+      <a data-view="cal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendario / entregas</a>
+      <a data-view="a4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>Vista Planner A4</a>
+    </nav>
+    <div class="side-foot"><b>Prioridad P2 · Importante</b><br>DWEC va detrás de LM y SI. Lo que vence en 7 días o menos sube al principio de la cola.
+      <div class="cfg"><input id="raiz" placeholder="C:/Users/pablo/.../UDAW-DWEC"><small>Ruta local del repo, para que funcionen los botones «Abrir en VS Code». Se guarda en este navegador.</small></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" type="search" placeholder="Buscar tarea o concepto…"></label>
+      <div class="chips" id="chips">
+        <button class="chip on" data-f="">Todos</button>
+        <button class="chip" data-f="pendiente">Pendiente</button>
+        <button class="chip" data-f="en-progreso">En progreso</button>
+        <button class="chip" data-f="completado">Completado</button>
+      </div>
+      <span class="live" title="Relee tus ficheros cada 4 segundos"><i></i>En directo</span>
+      <div class="top-actions">
+        <button class="btn btn-ghost" id="csv">Exportar CSV</button>
+        <a class="btn btn-primary" id="next" target="_blank">▶ Continuar</a>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+      <section class="view on" id="v-dash">
+        <div class="page-head"><div><h1>Dashboard general</h1><p id="hoy"></p></div><span class="pill p2">P2 · Importante</span></div>
+        <div class="kpis" id="kpis"></div>
+        <div class="grid-3">
+          <div class="card"><h3>Dominio global <small>pasos TODO hechos</small></h3><div class="donut-wrap" id="donut"></div></div>
+          <div class="card"><h3>Avance por tarea <small>% de pasos · horas</small></h3><div id="bars"></div></div>
+          <div class="card"><div class="cal-head"><b id="mini-mes"></b><span class="pill st-pendiente">entregas</span></div><div class="cal" id="mini-cal"></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><h3>Cola de trabajo <small>urgente → empezado → orden del curso</small></h3><ul class="queue" id="queue"></ul></div>
+          <div class="card"><h3>Cómo se actualiza</h3><div class="how">
+            Este panel <b>relee tus ficheros cada 4 s</b> mientras lo tienes abierto con Live Server.<br><br>
+            · <b>Pasos:</b> cada <code>TODO</code> que borras de un HTML, CSS o JS cuenta como hecho.<br>
+            · <b>Estado:</b> si tocas una plantilla, la tarea pasa sola a <i>en progreso</i>. Para cerrarla, cambia en la cabecera del JS
+            <code>@estado  completado</code> y apunta <code>@horas  2.5</code>.<br>
+            · <b>GitHub:</b> <code>PROGRESO.md</code> se regenera al hacer commit (hook) y en cada push (Action).</div>
+            <h3 style="margin-top:16px">Próximas entregas</h3><div id="dls"></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="v-plan">
+        <div class="page-head"><div><h1>Planificador de tareas</h1><p>Pasos pendientes por fichero, estado y horas, leídos de tus ficheros.</p></div></div>
+        <div class="card tbl-wrap"><table><thead><tr><th>Tarea</th><th>Estado</th><th>Ficheros (TODO hechos)</th><th>Horas</th><th style="text-align:right">Abrir</th></tr></thead><tbody id="tbody"></tbody></table></div>
+      </section>
+
+      <section class="view" id="v-ud">
+        <div class="page-head"><div><h1>Por tarea</h1><p>Avance de cada fichero: estructura (HTML), presentación (CSS) y lógica (JS).</p></div></div>
+        <div class="ud-grid" id="udgrid"></div>
+      </section>
+
+      <section class="view" id="v-cal">
+        <div class="page-head"><div><h1>Calendario / entregas</h1><p>Las fechas límite salen de <code>tools/tareas.json</code> (campo <code>fecha</code>). Añade las que conozcas.</p></div></div>
+        <div class="grid-2">
+          <div class="card"><div class="cal-head"><b id="big-mes"></b><div class="cal-nav"><button id="prev">‹</button><button id="today">•</button><button id="nextm">›</button></div></div><div class="cal big" id="big-cal"></div></div>
+          <div class="card"><h3>Entregas</h3><div id="dls2"></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="v-a4">
+        <div class="a4-toolbar"><p class="muted">Escribe los objetivos reales de hoy; se guardan en este navegador. Al imprimir se ocultan la barra lateral y los botones.</p><button class="btn btn-primary" onclick="window.print()">🖨 Imprimir / PDF</button></div>
+        <div class="a4" id="a4"></div>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { calcularProgreso, fmtHoras } from './tools/progreso-core.js';
+
+const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+const ESTADO_TXT = { completado: 'Completado', 'en-progreso': 'En progreso', pendiente: 'Pendiente', vencido: 'Vencido' };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pill = (st, auto) => `<span class="pill st-${st}" ${auto ? 'title="Detectado automáticamente: has empezado a tocar las plantillas"' : ''}>${ESTADO_TXT[st]}${auto ? ' ·auto' : ''}</span>`;
+const fecha = (s) => new Date(s + 'T00:00:00');
+const HOY_ISO = new Date().toLocaleDateString('sv-SE');
+const HOY = fecha(HOY_ISO);
+const ICO = {
+  open: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>',
+  code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>',
+  doc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  sol: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>'
+};
+const GH = 'https://github.com/PabloConde03/UDAW-DWEC';
+
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch { return null; } }
+$('#raiz').value = store('dwec-raiz') || '';
+$('#raiz').onchange = (e) => { store('dwec-raiz', e.target.value.trim().replace(/\\/g, '/').replace(/\/$/, '')); render(true); };
+const vscode = (rel) => { const r = store('dwec-raiz'); return r ? 'vscode://file/' + encodeURI(r + '/' + rel) : null; };
+
+/* ── Carga de datos (fetch de cada fichero) ── */
+let MAN = null, P = null, ultimo = '';
+async function texto(rel) {
+  try { const r = await fetch(rel + '?t=' + Date.now(), { cache: 'no-store' }); return r.ok ? await r.text() : null; } catch { return null; }
+}
+async function cargar() {
+  MAN ??= JSON.parse(await texto('tools/tareas.json'));
+  const rutas = MAN.tareas.flatMap((t) => t.archivos.map((a) => `${t.carpeta}/${a}`));
+  const textos = Object.fromEntries(await Promise.all(rutas.map(async (r) => [r, await texto(r)])));
+  return calcularProgreso(MAN, (rel) => textos[rel] ?? null, HOY_ISO);
+}
+
+/* ── Navegación ── */
+function show(v) {
+  $$('.view').forEach((x) => x.classList.toggle('on', x.id === 'v-' + v));
+  $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.view === v));
+  history.replaceState(null, '', '#' + v);
+}
+$$('#nav a').forEach((a) => (a.onclick = () => show(a.dataset.view)));
+if (location.hash && $('#v-' + location.hash.slice(1))) show(location.hash.slice(1));
+$('#hoy').textContent = HOY.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+/* ── Render ── */
+const kpi = (bg, col, ico, val, txt) => `<div class="card kpi"><div class="kpi-ico" style="background:${bg};color:${col}">${ico}</div><div><b>${val}</b><span>${txt}</span></div></div>`;
+const barra = (pct, col = 'var(--primary)') => `<span class="mini" style="width:100%"><i style="width:${pct}%;background:${col}"></i></span>`;
+
+function abrirBtns(t) {
+  const vs = vscode(`${t.carpeta}/${t.principal}`);
+  return `${vs ? `<a class="ico-btn" href="${esc(vs)}" title="Abrir el JS en VS Code">${ICO.code}</a>` : ''}
+    <a class="ico-btn" href="${esc(t.carpeta)}/index.html" target="_blank" title="Ejecutar index.html">${ICO.open}</a>
+    <a class="ico-btn" href="${GH}/blob/Pablo/${esc(t.carpeta)}/README.md" target="_blank" title="Enunciado">${ICO.doc}</a>
+    <a class="ico-btn" href="${GH}/tree/solution/${esc(t.carpeta)}" target="_blank" title="Ver la solución (¡después de intentarlo!)">${ICO.sol}</a>`;
+}
+
+function render(forzar = false) {
+  const firma = JSON.stringify(P);
+  if (!forzar && firma === ultimo) return;
+  ultimo = firma;
+  const T = P.totales;
+
+  const sig = P.cola[0];
+  if (sig) { $('#next').textContent = `▶ Continuar: ${sig.id}`; $('#next').href = `${sig.carpeta}/index.html`; }
+  else { $('#next').textContent = '🎉 Todo completado'; $('#next').removeAttribute('href'); }
+
+  $('#kpis').innerHTML =
+    kpi('#EFF6FF', '#2563EB', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9v9z"/></svg>', T.pct_pasos + ' %', 'Pasos hechos') +
+    kpi('#ECFDF5', '#16A34A', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>', `${T.completado}<small style="font-size:13px;color:#94A3B8">/${T.tareas}</small>`, 'Tareas completadas') +
+    kpi('#FEF3C7', '#D97706', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>', T['en-progreso'], 'En progreso') +
+    kpi('#FEF2F2', '#DC2626', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>', T.pendiente, 'Pendientes') +
+    kpi('#F3E8FF', '#9333EA', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4a2 2 0 0 0-.6 1.4V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4a2 2 0 0 0 .6-1.4V2"/></svg>', fmtHoras(T.horas) + ' h', 'Horas dedicadas');
+
+  // Donut: pasos hechos
+  const R = 54, C = 2 * Math.PI * R, len = T.pasos ? (T.pasos_hechos / T.pasos) * C : 0;
+  $('#donut').innerHTML = `<svg class="donut" viewBox="0 0 150 150"><circle r="${R}" cx="75" cy="75" fill="none" stroke="var(--c-todo)" stroke-width="16"/>
+    ${len > 0 ? `<circle r="${R}" cx="75" cy="75" fill="none" stroke="var(--primary)" stroke-width="16" stroke-dasharray="${len} ${C - len}" transform="rotate(-90 75 75)"/>` : ''}
+    <text x="75" y="74" text-anchor="middle" font-size="26" font-weight="800" fill="#0F172A">${T.pct_pasos}%</text><text x="75" y="94" text-anchor="middle" font-size="11" fill="#64748B">${T.pasos_hechos} de ${T.pasos}</text></svg>
+    <div class="legend"><div><i style="background:var(--c-ok)"></i>Tareas completadas · ${T.completado}</div><div><i style="background:var(--c-wip)"></i>En progreso · ${T['en-progreso']}</div><div><i style="background:var(--c-todo)"></i>Pendientes · ${T.pendiente}</div></div>`;
+
+  $('#bars').innerHTML = P.tareas.map((t) => {
+    const col = t.estadoReal === 'completado' ? 'var(--c-ok)' : t.estadoReal === 'en-progreso' ? 'var(--c-wip)' : 'var(--primary)';
+    return `<div class="bar-row"><div class="bar-top"><b>${esc(t.id)} · ${esc(t.titulo)}</b><span>${t.pct} % · ${fmtHoras(t.horas)} h</span></div><div class="bar"><i style="width:${t.pct}%;background:${col}"></i></div></div>`;
+  }).join('');
+
+  $('#queue').innerHTML = P.cola.map((t, i) => `<li><span class="q-n">${i + 1}</span>
+    <div class="q-main"><b>${esc(t.id)} — ${esc(t.titulo)}</b><span>${t.pasos_hechos}/${t.pasos_total} pasos · ${t.archivos.join(' · ')}</span></div>
+    ${t.dias !== null && t.dias <= 7 ? '<span class="pill st-vencido">Urgente</span>' : ''}${pill(t.estadoReal, t.auto)}${abrirBtns(t)}</li>`).join('') || '<p class="empty">No queda nada pendiente. 🎉</p>';
+
+  $('#tbody').innerHTML = P.tareas.map((t) => `<tr class="ej" data-st="${t.estadoReal}" data-q="${esc((t.id + ' ' + t.titulo + ' ' + t.archivos.join(' ')).toLowerCase())}">
+    <td><b>${esc(t.id)}</b> · ${esc(t.titulo)}<br><small class="muted">${esc(t.carpeta.split('/')[1])}</small></td>
+    <td>${pill(t.estado, t.auto)}</td>
+    <td><div class="files">${t.ficheros.map((f) => `<span class="fchip ${f.hechos === f.total ? 'done' : ''}" title="${f.hechos}/${f.total} TODO hechos">${esc(f.nombre)} <span class="mini"><i style="width:${f.total ? f.hechos / f.total * 100 : 0}%"></i></span></span>`).join('')}</div></td>
+    <td>${fmtHoras(t.horas)} h</td>
+    <td><div class="acts">${abrirBtns(t)}</div></td></tr>`).join('');
+
+  $('#udgrid').innerHTML = P.tareas.map((t) => `<div class="card task-card" data-st="${t.estadoReal}" data-q="${esc((t.id + ' ' + t.titulo).toLowerCase())}">
+    <h3>${esc(t.id)} · ${esc(t.titulo)} <small>${t.pct} %</small></h3>
+    <div class="t-files">${t.ficheros.map((f) => `<div class="t-file"><b>${esc(f.nombre)}</b>${barra(f.total ? f.hechos / f.total * 100 : 0, f.hechos === f.total ? 'var(--c-ok)' : 'var(--primary)')}<span class="muted">${f.hechos}/${f.total}</span></div>`).join('')}</div>
+    <div class="t-foot">${pill(t.estado, t.auto)}<div class="acts">${abrirBtns(t)}</div></div></div>`).join('');
+
+  $('#dls').innerHTML = $('#dls2').innerHTML = entregasHTML();
+  calendario($('#mini-cal'), $('#mini-mes'), HOY.getFullYear(), HOY.getMonth());
+  big();
+  a4();
+  filtrar();
+}
+
+/* ── Calendario y entregas ── */
+function entregasHTML() {
+  if (!P.entregas.length) return '<p class="empty">Sin fechas todavía. Añádelas en tools/tareas.json («fecha»: «AAAA-MM-DD»).</p>';
+  return P.entregas.map((e) => {
+    const f = fecha(e.fecha), d = e.dias;
+    const cuando = e.estadoReal === 'completado' ? pill('completado') : d < 0 ? pill('vencido') : `<span class="pill ${d <= 7 ? 'st-vencido' : 'st-en-progreso'}">${d === 0 ? 'Hoy' : d === 1 ? 'Mañana' : 'Faltan ' + d + ' días'}</span>`;
+    return `<div class="deadline"><div class="dl-date"><b>${f.getDate()}</b><small>${f.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '')}</small></div>
+      <div class="q-main"><b>${esc(e.id)} · ${esc(e.titulo)}</b><span>${e.pct} % de los pasos</span></div>${cuando}</div>`;
+  }).join('');
+}
+function calendario(el, labelEl, y, m) {
+  const DUE = Object.fromEntries(P.entregas.map((e) => [e.fecha, e]));
+  const first = new Date(y, m, 1), start = (first.getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
+  const lbl = first.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).replace(' de ', ' ');
+  labelEl.textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
+  let h = ['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d) => `<div class="dow">${d}</div>`).join('');
+  const prev = new Date(y, m, 0).getDate();
+  for (let i = start; i > 0; i--) h += `<div class="d out">${prev - i + 1}</div>`;
+  for (let d = 1; d <= days; d++) {
+    const iso = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const due = DUE[iso];
+    h += `<div class="d ${due ? 'due' : ''} ${iso === HOY_ISO ? 'today' : ''}" ${due ? `title="${esc(due.id + ' · ' + due.titulo)}"` : ''}>${d}</div>`;
+  }
+  for (let d = 1; d <= (7 - (start + days) % 7) % 7; d++) h += `<div class="d out">${d}</div>`;
+  el.innerHTML = h;
+}
+let cy = HOY.getFullYear(), cm = HOY.getMonth();
+const big = () => calendario($('#big-cal'), $('#big-mes'), cy, cm);
+$('#prev').onclick = () => { cm--; if (cm < 0) { cm = 11; cy--; } big(); };
+$('#nextm').onclick = () => { cm++; if (cm > 11) { cm = 0; cy++; } big(); };
+$('#today').onclick = () => { cy = HOY.getFullYear(); cm = HOY.getMonth(); big(); };
+
+/* ── Planner A4 ── */
+function a4() {
+  const k = 'dwec-a4-' + HOY_ISO;
+  let g = {};
+  try { g = JSON.parse(store(k) || '{}'); } catch {}
+  const T = P.totales;
+  const obj = (i) => `<div class="obj-line"><span class="box">☐</span><input data-k="o${i}" placeholder="Objetivo ${i}…" value="${esc(g['o' + i] || '')}"></div>`;
+  $('#a4').innerHTML = `<h1>Planner de estudio · DWEC <small>${HOY.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</small></h1>
+    <div class="a4-meta"><span>MP0612 · Desarrollo Web en Entorno Cliente</span><span>Prioridad: P2 · Importante</span><span>Avance: ${T.pct_pasos} % de los pasos</span></div>
+    <div class="a4-cols"><div><h2>Objetivos del día</h2>${[1, 2, 3, 4].map(obj).join('')}</div>
+      <div><h2>Estado</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="a4-stat"><b>${T.completado}/${T.tareas}</b>tareas completadas</div><div class="a4-stat"><b>${T.pasos_hechos}/${T.pasos}</b>pasos hechos</div>
+        <div class="a4-stat"><b>${fmtHoras(T.horas)} h</b>dedicadas</div><div class="a4-stat"><b>${P.entregas.filter((e) => e.estadoReal !== 'completado' && e.dias >= 0).map((e) => e.dias + ' d').join(', ') || '—'}</b>a la próxima entrega</div></div></div></div>
+    <h2>Cola de trabajo</h2>
+    <table><thead><tr><th class="box"></th><th>Tarea</th><th>Ficheros pendientes</th><th>Estado</th><th style="width:70px">Tiempo</th></tr></thead><tbody>
+      ${P.cola.map((t) => `<tr><td class="box">☐</td><td>${esc(t.id)} — ${esc(t.titulo)}</td><td>${t.ficheros.filter((f) => f.hechos < f.total).map((f) => `${esc(f.nombre)} (${f.total - f.hechos})`).join(', ')}</td><td>${ESTADO_TXT[t.estadoReal]}</td><td></td></tr>`).join('')}
+    </tbody></table>
+    <h2>Notas</h2><div class="notes"><textarea data-k="notas" placeholder="Dudas, conceptos a repasar, preguntas para el profesor…">${esc(g.notas || '')}</textarea></div>`;
+  $$('#a4 [data-k]').forEach((el) => (el.oninput = () => { g[el.dataset.k] = el.value; store(k, JSON.stringify(g)); }));
+}
+
+/* ── Filtros ── */
+let fEstado = '', fQ = '';
+function filtrar() {
+  const oculto = (el) => (fEstado && el.dataset.st !== fEstado) || (fQ && !el.dataset.q.includes(fQ));
+  $$('#tbody tr').forEach((r) => r.classList.toggle('hide', oculto(r)));
+  $$('#udgrid .task-card').forEach((c) => (c.style.display = oculto(c) ? 'none' : ''));
+}
+$('#q').oninput = (e) => { fQ = e.target.value.trim().toLowerCase(); if (fQ && $('#v-dash').classList.contains('on')) show('plan'); filtrar(); };
+$$('#chips .chip').forEach((c) => (c.onclick = () => { $$('#chips .chip').forEach((x) => x.classList.remove('on')); c.classList.add('on'); fEstado = c.dataset.f; filtrar(); }));
+
+/* ── CSV ── */
+$('#csv').onclick = () => {
+  const rows = [['Tarea', 'Titulo', 'Estado', 'HTML', 'CSS', 'JS', 'Pasos hechos', 'Pasos', 'Horas', 'Fecha limite']];
+  P.tareas.forEach((t) => rows.push([t.id, t.titulo, t.estadoReal, ...t.ficheros.map((f) => `${f.hechos}/${f.total}`), t.pasos_hechos, t.pasos_total, String(t.horas).replace('.', ','), t.fecha || '']));
+  const csv = '\ufeff' + rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `progreso-dwec-${HOY_ISO}.csv`; a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* ── Arranque y refresco en directo ── */
+async function tick() {
+  try { P = await cargar(); render(); } catch (e) { console.error(e); }
+}
+if (location.protocol === 'file:') {
+  $('#content').innerHTML = '<div class="fatal card"><h2>Ábrelo con Live Server</h2><p class="muted">El dashboard lee tus ficheros con <code>fetch</code>, y el navegador no lo permite desde <code>file://</code>.<br>En VS Code: clic derecho sobre <b>dashboard.html</b> → <b>Open with Live Server</b>.</p></div>';
+} else {
+  await tick();
+  setInterval(tick, 4000);
+}
+</script>
+</body>
+</html>

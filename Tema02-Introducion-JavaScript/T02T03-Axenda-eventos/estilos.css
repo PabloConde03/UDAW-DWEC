@@ -1,0 +1,22 @@
+/* ==================================================================== */
+/*  T02T03 · estilos.css                                                */
+/*  Cada bloque TODO es una regla o grupo de reglas. Bórralo al hacerlo. */
+/* ==================================================================== */
+
+/* TODO 1: Reset universal + :root con --cor-primaria #007bff y
+           --cor-secundaria #0056b3 */
+
+/* TODO 2: .contedor-principal: max-width 800px, padding 30px,
+           border-radius 12px */
+
+/* TODO 3: form: GRID de 2 columnas (1fr 2fr) con gap 15px */
+
+/* TODO 4: Filtros: FLEXBOX con flex-wrap */
+
+/* TODO 5: .elemento-evento: flex, justify-content: space-between,
+           border-left 5px de la color primaria */
+
+/* TODO 6: Clases de los nodos generados: .data, .nome, .btn-editar,
+           .btn-eliminar (+ :hover) */
+
+/* TODO 7: @media (max-width: 600px): el form pasa a UNA columna */

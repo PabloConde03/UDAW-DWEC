@@ -1,0 +1,24 @@
+/* ==================================================================== */
+/*  T02T05 · estilo.css                                                 */
+/*  Cada bloque TODO es una regla o grupo de reglas. Bórralo al hacerlo. */
+/* ==================================================================== */
+
+/* TODO 1: :root (--cor-fondo-principal, --cor-tapa-carta #1e88e5,
+           --cor-fondo-carta, --cor-sombra) */
+
+/* TODO 2: body: FLEXBOX centrando; contenedor width 90 % y max-width
+           550px */
+
+/* TODO 3: .taboleiro: GRID repeat(4, 1fr) con gap 12px */
+
+/* TODO 4: .carta: position relative, height 140px */
+
+/* TODO 5: .parte-diante / .parte-detras: position absolute, 100 % x
+           100 %, flex centrado */
+
+/* TODO 6: Tapa opacity 1; cara opacity 0 + pointer-events: none */
+
+/* TODO 7: .carta-virada invierte las opacidades (sin transform ni
+           transition) */
+
+/* TODO 8: .parella-atopada: cambia el cursor */

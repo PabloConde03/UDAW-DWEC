@@ -16,6 +16,33 @@ Tareas guiadas de JavaScript del ciclo superior de **Desarrollo de Aplicaciones 
 
 ---
 
+> 🧑‍💻 **Estás en la rama `Pablo`**: enunciados + plantillas de trabajo + dashboard de progreso.
+
+<!-- PROGRESO:INICIO -->
+**Progreso:** `░░░░░░░░░░░░░░░░░░░░` **0 %** de los pasos · 0/6 tareas completadas · 0 h · [ver detalle](PROGRESO.md)
+<!-- PROGRESO:FIN -->
+
+## Cómo trabajar en esta rama
+
+1. **Abre el dashboard con Live Server:** clic derecho sobre `dashboard.html` → *Open with Live Server* (`http://127.0.0.1:5500/dashboard.html`). **Relee tus ficheros cada 4 s**, así que lo puedes dejar abierto en una pestaña mientras trabajas.
+2. **Cada tarea trae tres plantillas** (`index.html`, la hoja CSS y el JS) con los pasos como `TODO`. El JS incluye además el objetivo, pistas, la *trampa de examen* y las firmas de las funciones que piden los `onclick` del enunciado. No llevan la solución.
+3. **Los pasos se cuentan solos:** cada `TODO` que borras cuenta como hecho, por fichero (HTML · CSS · JS).
+4. **El estado vive en la cabecera del JS:**
+   ```js
+    *  @estado  completado     ← pendiente | en-progreso | completado
+    *  @horas   2.5
+   ```
+   En cuanto tocas una plantilla, la tarea pasa sola a *en progreso*. Lo único que marcas a mano es `completado` y las horas.
+5. **Compara con la solución cuando acabes:**
+   `git diff Pablo origin/solution -- Tema02-Introducion-JavaScript/T02T04-Lista-To-Do/`, o el botón 💡 del dashboard.
+6. **`PROGRESO.md` se regenera solo:**
+   - en cada commit, si activas el hook una vez con `git config core.hooksPath tools/hooks` (necesita Node);
+   - en cada push, mediante la GitHub Action `Actualizar progreso`.
+
+   Si la Action llega a hacer un commit, ejecuta `git pull --rebase` antes de tu siguiente push.
+7. **Comprobación de sintaxis** de todos los JS (equivale a `node --check`): `npm run check`.
+8. **Fechas de entrega:** añádelas en `tools/tareas.json` (`"fecha": "AAAA-MM-DD"`). Lo que vence en 7 días o menos sube al principio de la cola.
+
 ## Contenido
 
 - [Sobre el repositorio](#sobre-el-repositorio)

@@ -1,0 +1,10 @@
+{
+  "name": "udaw-dwec",
+  "private": true,
+  "type": "module",
+  "description": "Tareas de DWEC (MP0612) · UDAW Xunta de Galicia",
+  "scripts": {
+    "progreso": "node tools/generar-progreso.js",
+    "check": "node tools/check.js"
+  }
+}

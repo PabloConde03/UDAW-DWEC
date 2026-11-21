@@ -1,0 +1,146 @@
+{
+  "modulo": "MP0612 · DWEC",
+  "temas": {
+    "Tema02": "Introdución a JavaScript"
+  },
+  "tareas": [
+    {
+      "id": "T02T01",
+      "titulo": "Adiviña o número",
+      "tema": "Tema02",
+      "carpeta": "Tema02-Introducion-JavaScript/T02T01-Adivina-o-numero",
+      "fecha": null,
+      "principal": "t02t01.js",
+      "archivos": [
+        "index.html",
+        "estilos.css",
+        "t02t01.js"
+      ],
+      "pasos": {
+        "index.html": 6,
+        "estilos.css": 7,
+        "t02t01.js": 9
+      },
+      "plantilla": {
+        "index.html": "6a59d774",
+        "estilos.css": "88b92a84",
+        "t02t01.js": "388deed5"
+      }
+    },
+    {
+      "id": "T02T02",
+      "titulo": "Calculadora de aniversario",
+      "tema": "Tema02",
+      "carpeta": "Tema02-Introducion-JavaScript/T02T02-Calculadora-aniversario",
+      "fecha": null,
+      "principal": "script.js",
+      "archivos": [
+        "index.html",
+        "estilos.css",
+        "script.js"
+      ],
+      "pasos": {
+        "index.html": 8,
+        "estilos.css": 6,
+        "script.js": 9
+      },
+      "plantilla": {
+        "index.html": "6820531d",
+        "estilos.css": "d8e12aac",
+        "script.js": "065f4664"
+      }
+    },
+    {
+      "id": "T02T03",
+      "titulo": "Axenda de eventos",
+      "tema": "Tema02",
+      "carpeta": "Tema02-Introducion-JavaScript/T02T03-Axenda-eventos",
+      "fecha": null,
+      "principal": "script.js",
+      "archivos": [
+        "index.html",
+        "estilos.css",
+        "script.js"
+      ],
+      "pasos": {
+        "index.html": 6,
+        "estilos.css": 7,
+        "script.js": 19
+      },
+      "plantilla": {
+        "index.html": "2dea97a3",
+        "estilos.css": "4573499f",
+        "script.js": "c3ea37d5"
+      }
+    },
+    {
+      "id": "T02T04",
+      "titulo": "Lista To-Do",
+      "tema": "Tema02",
+      "carpeta": "Tema02-Introducion-JavaScript/T02T04-Lista-To-Do",
+      "fecha": null,
+      "principal": "script.js",
+      "archivos": [
+        "index.html",
+        "estilos.css",
+        "script.js"
+      ],
+      "pasos": {
+        "index.html": 5,
+        "estilos.css": 7,
+        "script.js": 13
+      },
+      "plantilla": {
+        "index.html": "1bbb8ca7",
+        "estilos.css": "24f7c1cb",
+        "script.js": "7e9ad2b2"
+      }
+    },
+    {
+      "id": "T02T05",
+      "titulo": "Xogo de memoria",
+      "tema": "Tema02",
+      "carpeta": "Tema02-Introducion-JavaScript/T02T05-Xogo-memoria",
+      "fecha": null,
+      "principal": "memoria.js",
+      "archivos": [
+        "index.html",
+        "estilo.css",
+        "memoria.js"
+      ],
+      "pasos": {
+        "index.html": 5,
+        "estilo.css": 8,
+        "memoria.js": 17
+      },
+      "plantilla": {
+        "index.html": "083dc881",
+        "estilo.css": "a1fa90a5",
+        "memoria.js": "7ddb5a76"
+      }
+    },
+    {
+      "id": "T02T06",
+      "titulo": "Xestor de contactos",
+      "tema": "Tema02",
+      "carpeta": "Tema02-Introducion-JavaScript/T02T06-Xestor-contactos",
+      "fecha": null,
+      "principal": "script.js",
+      "archivos": [
+        "index.html",
+        "estilos.css",
+        "script.js"
+      ],
+      "pasos": {
+        "index.html": 7,
+        "estilos.css": 9,
+        "script.js": 22
+      },
+      "plantilla": {
+        "index.html": "47914618",
+        "estilos.css": "f5f95a69",
+        "script.js": "8f33ed5f"
+      }
+    }
+  ]
+}

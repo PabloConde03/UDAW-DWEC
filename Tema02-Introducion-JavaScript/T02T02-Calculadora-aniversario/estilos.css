@@ -1,0 +1,20 @@
+/* ==================================================================== */
+/*  T02T02 · estilos.css                                                */
+/*  Cada bloque TODO es una regla o grupo de reglas. Bórralo al hacerlo. */
+/* ==================================================================== */
+
+/* TODO 1: :root con las variables --cor-fondo-principal,
+           --cor-primaria, --cor-secundaria, --cor-fondo-carta,
+           --cor-sombra */
+
+/* TODO 2: body: FLEXBOX centrando en los dos ejes + min-height 100vh */
+
+/* TODO 3: .contedor-principal: tarjeta, width 90 %, max-width 450px */
+
+/* TODO 4: form: flex en columna con gap 15px; date y select a ancho
+           completo */
+
+/* TODO 5: button con la color primaria y :hover con la secundaria */
+
+/* TODO 6: .resultado: border-top 2px de la color primaria, min-height
+           80px */

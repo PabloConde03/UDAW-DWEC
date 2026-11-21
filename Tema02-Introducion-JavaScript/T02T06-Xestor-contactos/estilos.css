@@ -1,0 +1,29 @@
+/* ==================================================================== */
+/*  T02T06 · estilos.css                                                */
+/*  Cada bloque TODO es una regla o grupo de reglas. Bórralo al hacerlo. */
+/* ==================================================================== */
+
+/* TODO 1: Reset + :root (--cor-fondo-principal, --cor-primaria,
+           --cor-secundaria, --cor-fondo-claro, --cor-sombra) */
+
+/* TODO 2: .contedor-principal centrada (width 90 %, margin 20px auto);
+           .contedor-datos FLEX con wrap; .contedor con flex-grow: 1 */
+
+/* TODO 3: form: GRID 1fr 2fr, gap 15px; inputs a ancho completo */
+
+/* TODO 4: input:required:invalid (rojo + sombra) /
+           input:required:valid (verde) */
+
+/* TODO 5: .contedor-btns: grid-column 1 / -1, flex a la derecha;
+           botones con transition, :hover translateY(-2px), :active y
+           :disabled */
+
+/* TODO 6: .opcions-ordenacion: flex con fondo gris claro */
+
+/* TODO 7: .contacto-item: GRID 2fr 1fr 1fr 50px, border-left de color
+           primaria */
+
+/* TODO 8: .btns-accion: botones sin fondo, .btn-editar amarillo,
+           .btn-eliminar rojo, scale en :hover */
+
+/* TODO 9: @media (max-width: 600px): form en columna */

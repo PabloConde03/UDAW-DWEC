@@ -1,0 +1,21 @@
+/* ==================================================================== */
+/*  T02T04 · estilos.css                                                */
+/*  Cada bloque TODO es una regla o grupo de reglas. Bórralo al hacerlo. */
+/* ==================================================================== */
+
+/* TODO 1: Reset universal + :root (--cor-fondo, --cor-principal,
+           --cor-texto, --cor-borde-input, --cor-sombra) */
+
+/* TODO 2: body: FLEXBOX centrando en los dos ejes, min-height 100vh */
+
+/* TODO 3: Contenedor: width 90 %, max-width 500px */
+
+/* TODO 4: .formulario-tarefa: flex (el input crece con flex: 1) */
+
+/* TODO 5: .elemento-tarefa: flex + justify-content: space-between */
+
+/* TODO 6: .elemento-tarefa.completada span: line-through y color #888
+           (+ otro fondo) */
+
+/* TODO 7: :focus en el input; :hover de .btn-completar (verde) y
+           .btn-eliminar (rojo) */
