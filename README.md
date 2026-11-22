@@ -16,7 +16,8 @@ Tareas guiadas de JavaScript del ciclo superior de **Desarrollo de Aplicaciones 
 
 ---
 
-> ✅ **Estás en la rama `solution`**: cada carpeta incluye la tarea resuelta y un `SOLUCION.md` con los cambios respecto a la guía oficial y las trampas de examen.
+> [!WARNING]
+> **Aquí están las soluciones.** Si estás estudiando, intenta antes los ejercicios en [`main`](../../tree/main) (o con las plantillas de [`Pablo`](../../tree/Pablo)) y vuelve aquí solo para comparar. Cada carpeta incluye la tarea resuelta y un `SOLUCION.md` con los cambios respecto a la guía oficial y las trampas de examen.
 
 ## Contenido
 
@@ -75,7 +76,11 @@ UDAW-DWEC/
 ├── assets/capturas/                 # Resultado esperado de cada tarea
 └── Tema02-Introducion-JavaScript/
     └── T02T0N-Nombre/
-        └── README.md                # Enunciado
+        ├── README.md                # Enunciado
+        ├── SOLUCION.md              # Cambios respecto a la guía y trampas de examen
+        ├── index.html
+        ├── estilos.css              # estilo.css en la T02T05
+        └── script.js                # t02t01.js en la T02T01, memoria.js en la T02T05
 ```
 
 ## Puesta en marcha
@@ -83,6 +88,7 @@ UDAW-DWEC/
 ```bash
 git clone https://github.com/PabloConde03/UDAW-DWEC.git
 cd UDAW-DWEC
+git checkout solution
 code .
 ```
 
