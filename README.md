@@ -16,6 +16,9 @@ Tareas guiadas de JavaScript del ciclo superior de **Desarrollo de Aplicaciones 
 
 ---
 
+> [!NOTE]
+> **Estás en la rama `main`**: es la referencia del repositorio, solo con los enunciados y las capturas del resultado esperado. Para trabajar las tareas usa [`Pablo`](../../tree/Pablo) (plantillas y dashboard de progreso); para consultar las soluciones, [`solution`](../../tree/solution).
+
 ## Contenido
 
 - [Sobre el repositorio](#sobre-el-repositorio)
